@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    build: App/698subhashchandra/flaskapp:latest
+    build: App/698subhashchandra/flaskapp:latest .
     ports:
       - "5000:5000"
     volumes:
