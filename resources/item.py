@@ -22,9 +22,8 @@ class Item(MethodView):
         except KeyError:
             abort(404, message="Item not found.")
 
-    def put(self, item_id):
-    @blp.arguments(ItemUpdateSchema)
 
+    @blp.arguments(ItemUpdateSchema)
     def put(self, item_data, item_id):
         try:
             item = items[item_id]
