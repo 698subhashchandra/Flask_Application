@@ -38,11 +38,15 @@ class Item(MethodView):
 
 @blp.route("/item")
 class ItemList(MethodView):
+    @blp.response(200, ItemSchema)
     def get(self):
-        return {"items": list(items.values())}
+        return items.values()
 
     @blp.arguments(ItemSchema)
+    @blp.response(200, ItemSchema)
+    @blp.response(201, ItemSchema)
     def post(self, item_data):
+
         for item in items.values():
             if (
                 item_data["name"] == item["name"]
