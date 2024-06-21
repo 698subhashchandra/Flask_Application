@@ -9,6 +9,7 @@ blp = Blueprint("Stores", "stores", description="Operations on stores")
 
 @blp.route("/store/<string:store_id>")
 class Store(MethodView):
+    @blp.response(200, StoreSchema)
     def get(self, store_id):
         try:
             # You presumably would want to include the store's items here too
@@ -27,8 +28,9 @@ class Store(MethodView):
 
 @blp.route("/store")
 class StoreList(MethodView):
+    @blp.response(200, StoreSchema(many=True))
     def get(self):
-        return {"stores": list(stores.values())}
+        return stores.values()
 
     @blp.arguments(StoreSchema)
     def post(selfcls, store_data):
