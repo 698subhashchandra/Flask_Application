@@ -1,3 +1,6 @@
+import os
+
+
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
@@ -5,6 +8,8 @@ from flask_migrate import Migrate
 
 from db import db
 from blocklist import BLOCKLIST
+import models
+
 
 from resources.user import blp as UserBlueprint
 from resources.item import blp as ItemBlueprint
@@ -92,12 +97,6 @@ def create_app(db_url=None):
             401,
         )
 
-    # JWT configuration ends
-
-    with app.app_context():
-        import models  # noqa: F401
-
-        db.create_all()
 
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(ItemBlueprint)
