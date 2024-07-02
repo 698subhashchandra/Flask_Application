@@ -2,6 +2,7 @@ version: '3.8'
 services:
   web:
     build: 698subhashchandra/flask-api:latest
+    context: /var/lib/jenkins/workspace/flask-app-cicd/698subhashchandra/flask-api
     command: flask run --host=0.0.0.0
     volumes:
       - .:/app
