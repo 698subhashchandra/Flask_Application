@@ -30,13 +30,11 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo"Deploying the Application on server"
-                dir('/var/lib/jenkins/workspace/flask-app-cicd/698subhashchandra') {
                     script {
                         sh 'docker-compose down'
-                        sh 'docker-compose build'
                         sh 'docker-compose up -d'
                     }
-                }
+                
             }
         }
     }
