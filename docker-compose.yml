@@ -2,13 +2,14 @@ version: '3.8'
 services:
   web:
     build:
-      context: /var/lib/jenkins/workspace/flask-app-cicd/698subhashchandra/flask-api
+      context: .
     image: 698subhashchandra/flask-api:latest
     command: flask run --host=0.0.0.0
     volumes:
-      - /var/lib/jenkins/workspace/flask-app-cicd/698subhashchandra/flask-api:/app
+      - .:/app
     ports:
       - "5000:5000"
     environment:
       - FLASK_ENV=development
     working_dir: /app
+
