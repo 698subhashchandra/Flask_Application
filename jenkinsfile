@@ -29,10 +29,13 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                echo"Deploying the Application on server"
+                echo"Deploying the Application on web server for public view "
                 sh "docker-compose down "
                 sh "docker-compose up -d"
             }
         }
     }
 }
+
+
+
