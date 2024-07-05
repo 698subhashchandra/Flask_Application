@@ -25,6 +25,12 @@ pipeline {
                 }
             }
         }
+    stage("Trivy File System Scan") {
+            steps {
+                echo "Scan file system"
+                sh "trivy fs --format table -o trivy-fs-report.html"
+            }
+        }
         stage("Build and Test") {
             steps {
                 echo "Building the Image and Test It"
