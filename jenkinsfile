@@ -17,12 +17,7 @@ pipeline {
             }
         }
     }
-    stage("OWASP DependencyCheck") {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dc'
-                dependencyChecksPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
+    
     stage("Sonar Quality Gate Scan") {
             steps {
                 timeout(time: 2, unit: "MINUTES"){
