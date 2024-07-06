@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        SONAR_HOME= tool "Sonar"
+    }
     stages {
         stage("Clone Code") {
             steps {
@@ -8,7 +10,33 @@ pipeline {
                 git url: "https://github.com/698subhashchandra/Flask_Application.git", branch: "main"
             }
         }
-
+    stage("SonarQube Quality Analysis") {
+            steps {
+                withSonarQubeEnv("Sonar"){
+                    sh "$SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=Flask_Application -Dsonar.projectKey=Flask_Application"
+            }
+        }
+    }
+    
+    stage("Sonar Quality Gate Scan") {
+            steps {
+                timeout(time: 2, unit: "MINUTES"){
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+     stage("OWASP Dependency Check") {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation:'dc'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+    stage("Trivy File System Scan") {
+            steps {
+                echo "Scan file system"
+                sh "trivy fs --format table -o trivy-fs-report.html ."
+            }
+        }
         stage("Build and Test") {
             steps {
                 echo "Building the Image and Test It"
@@ -18,7 +46,7 @@ pipeline {
 
         stage("Push to Docker Hub") {
             steps {
-                echo"Pushing the Image to DockerHub"
+                echo "Pushing the Image to DockerHub"
                 withCredentials([usernamePassword(credentialsId: "dockerHub", passwordVariable: "dockerHubPass", usernameVariable: "dockerHubUser")]) {
                     sh "docker tag flask-api ${env.dockerHubUser}/flask-api:latest"
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
@@ -29,6 +57,7 @@ pipeline {
 
         stage("Deploy") {
             steps {
+
                 echo"Deploying the Application on web server for public view "
                 sh "docker-compose down "
                 sh "docker-compose up -d"
@@ -36,4 +65,7 @@ pipeline {
         }
     }
 }
+
+
+
 

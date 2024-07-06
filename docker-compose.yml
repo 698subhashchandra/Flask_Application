@@ -1,7 +1,10 @@
-version: '3.8'
+version: '3.9'
 services:
   web:
-    build: .
+    build:
+      context: .
+    image: 698subhashchandra/flask-api:latest
+    command: flask run --host=0.0.0.0
     volumes:
       - .:/app
     ports:
@@ -9,3 +12,5 @@ services:
     environment:
       - FLASK_ENV=development
     working_dir: /app
+
+
