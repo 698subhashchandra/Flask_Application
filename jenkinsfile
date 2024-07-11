@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SONAR_HOME= tool "Sonar"
+        SONAR_HOME = tool "Sonar"
     }
     stages {
         stage("Clone Code") {
@@ -10,23 +10,21 @@ pipeline {
                 git url: "https://github.com/698subhashchandra/Flask_Application.git", branch: "main"
             }
         }
-    stage("SonarQube Quality Analysis") {
+        stage("SonarQube Quality Analysis") {
             steps {
-                withSonarQubeEnv("Sonar"){
+                withSonarQubeEnv("Sonar") {
                     sh "$SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=Flask_Application -Dsonar.projectKey=Flask_Application"
+                }
             }
         }
-    }
-    
-    stage("Sonar Quality Gate Scan") {
+        stage("Sonar Quality Gate Scan") {
             steps {
-                timeout(time: 3, unit: "MINUTES"){
+                timeout(time: 3, unit: "MINUTES") {
                     waitForQualityGate abortPipeline: false
                 }
             }
         }
-     
-    stage("Trivy File System Scan") {
+        stage("Trivy File System Scan") {
             steps {
                 echo "Scan file system"
                 sh "trivy fs --format table -o trivy-fs-report.html ."
@@ -36,37 +34,29 @@ pipeline {
             steps {
                 echo "Building the Image and Test It"
                 withDockerRegistry([credentialsId: "dockerHub", url: ""]) {
-                 script{
-                 app = docker.build("asg")
-                 }
-               }
-
-            }
-        }
-
-        stage("Push The a Image on AWS ECR") {
-            steps {
-                script{
-                    docker.withRegistry('https://129390742221.dkr.ecr.eu-north-1.amazonaws.com/', 'ecr:eu-north-1:aws-credentials') {
-                    app.push("latest")
+                    script {
+                        app = docker.build("asg")
                     }
                 }
-               
             }
         }
-
+        stage("Push The Image on AWS ECR") {
+            steps {
+                script {
+                    docker.withRegistry('https://129390742221.dkr.ecr.eu-north-1.amazonaws.com/', 'ecr:eu-north-1:aws-credentials') {
+                        app.push("latest")
+                    }
+                }
+            }
+        }
         stage("Deploy") {
             steps {
-                echo"Deploying the Application  "
-		withKubeConfig([credentialsId: 'kubelogin']) {
-		           sh('kubectl delete all --all -n devsecops')
-		           sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
-	        	
+                echo "Deploying the Application"
+                withKubeConfig([credentialsId: 'kubelogin']) {
+                    sh('kubectl delete all --all -n devsecops')
+                    sh('kubectl apply -f deployment.yaml --namespace=devsecops')
+                }
             }
         }
     }
 }
-
-
-
-
