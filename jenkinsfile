@@ -58,10 +58,10 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo"Deploying the Application  "
-                withKubeConfig([credentialsId: 'kubelogin']) {
+
 		           sh('kubectl delete all --all -n devsecops')
 		           sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
-	        	}
+	        	
             }
         }
     }
