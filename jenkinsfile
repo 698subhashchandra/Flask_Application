@@ -58,7 +58,7 @@ pipeline {
         stage("Deploy") {
             steps {
 
-                echo"Deploying the Application on web server for public view "
+                echo"Deploying the Application on web server for public view"
                 
             }
         }
