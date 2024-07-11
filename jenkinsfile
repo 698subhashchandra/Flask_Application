@@ -57,7 +57,7 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                echo"Deploying the Application on AWS EKS"
+                echo"Deploying the Application on AWS EKS "
                 withKubeConfig([credentialsId: 'kubelogin']) {
 		  sh('kubectl delete all --all -n devsecops')
 		  sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
