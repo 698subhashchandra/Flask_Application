@@ -57,9 +57,11 @@ pipeline {
 
         stage("Deploy") {
             steps {
-
-                echo"Deploying the Application on web server for public view"
-                
+                echo"Deploying the Application on Flask  web server for public view"
+                withKubeConfig([credentialsId: 'kubelogin']) {
+		  sh('kubectl delete all --all -n devsecops')
+		  sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
+		}
             }
         }
     }
