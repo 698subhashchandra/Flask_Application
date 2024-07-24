@@ -38,4 +38,3 @@ spec:
   type: LoadBalancer
   selector:
     app: flask
-
